@@ -1,0 +1,69 @@
+sb sa phla Create bucket------name-----
+
+object ownership -------ACLs enable
+
+Block Public Access settings for this bucket--------offf krna Block all public access
+Bucket Versioning-----enable 
+
+aisa dono bucket m krna 
+
+
+
+source-bucket
+==================
+Management---Replication rules----Create replication rule
+
+
+name---
+source bucket---choose a rule scope---->Apply to all objects in the bucket
+
+
+
+Destination-----Specify a bucket in another account------
+Account ID or bucketname
+
+
+IAM role------------Choose from existing IAM roles--------create new role
+
+
+
+                                                                save
+
+destination bucket
+===================
+
+
+jo bucket na nam dala h usma ja kr Permissions-----
+Bucket policy
+
+
+{
+   "Version":"2012-10-17",
+   "Id":"",
+   "Statement":[
+      {
+         "Sid":"Set permissions for objects",
+         "Effect":"Allow",
+         "Principal":{
+            "AWS":"arn:aws:iam::source-bucket-acct-ID:role/service-role/source-acct-IAM-role"-----------------------iska source bucket m jana jaha Replication rules m rules ko select krna fir upr m hi Replication rules-------nich----IAM role-----ARN ---copy krna 
+         },
+         "Action":["s3:ReplicateObject", "s3:ReplicateDelete"],
+         "Resource":"arn:aws:s3:::DOC-EXAMPLE-BUCKET/*"
+      },
+      {
+         "Sid":"Set permissions on bucket",
+         "Effect":"Allow",
+         "Principal":{
+            "AWS":"arn:aws:iam::source-bucket-acct-ID:role/service-role/source-acct-IAM-role"
+         },
+         "Action":["s3:List*", "s3:GetBucketVersioning", "s3:PutBucketVersioning"],
+         "Resource":"arn:aws:s3:::DOC-EXAMPLE-BUCKET"
+      }
+   ]
+}
+
+
+
+
+ya script site------https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-walkthrough-2.html
+

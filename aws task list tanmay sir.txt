@@ -1,0 +1,450 @@
+1.LAMP SERVER using nginx instead of apache?
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2.one bucket create on MFA?
+
+
+MFA-protection on 53 Buckets
+
+Using MFA-protected on S3 buckets will enable an extra layer of protection to ensure that the S3 objects (files) cannot be accidentally or intentionally deleted by the AWS users that have access to the buckets.
+
+Prerequisite:
+
+Configure AWS CLI with your own access details.
+
+MFA device should be assigned for the IAM User.
+
+Versioning must be enable on Bucket. NOTE: Enabling MFA via AWS Management Console is not currently supported.
+
+NOTE-You Can not stop versioning without MFA Token.
+
+You will need MFA to-
+
+*Permanently delete an Object version *Suspend versioning on the bucket
+
+Only the bucket owner (root account) can enable/disable MFA-Delete
+
+
+steps:-
+
+aws configure
+
+aws s3api list-buckets
+
+aws s3api get-bucket-versioning --bucket "bucketname"  |---------------ya command sa btaya ga ki versioning enable h k nhi
+
+
+aws s3api put-bucket-versioning --bucket mfa-versioning-on-cli --versioning-configuration Status=Enabled,MFADelete=Enabled --mfa "arn:aws:iam::317969937136:mfa/root-mfa 831548"
+
+aws s3api delete-object--bucket texttext2020 --key TechnicalSafar.jpg
+
+(File was deleted because it protect only Versionong File
+
+
+aws s3api delete-object--bucket texttext2020 --key technicalSafar.jpg --version-id Eqv102ILF1183PL2kCWYUB8XPS) (now Try to delet VersioniD File It required MFA)
+
+aws s3api put-bucket-versioning --bucket texttext2020 --versioning-configuration Status Enabled, MFADelete=Disab]
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+3.Set the lifecycle rule on s3? 
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4.Mount s3 bucket on ec2?try to host website?
+
+Create bucket or ec2 instance 
+ssh on ec2 instance
+firs use command sudo amazon-linux-extras install epel -y
+yum install s3fs-fuse -y
+
+echo AKIAXVCWWPIQX7MJJFXW:vJib1dc6R91GNIKN1GQ23qkily2vkGN1HNtFTDgP> ${HOME}/.xyz
+chmod 600 ${HOME}/.passwd-s3fs
+s3fs mybucketname /s3 -o passwd file=${HOME}/.passwd-s3fs
+
+
+
+
+0r host website
+
+
+aws configure
+AWS Access Key ID [None]: AKIAUUCD4GLYI27Z7OXE
+AWS Secret Access Key [None]: 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
+Default region name [None]: us-east-2
+Default output format [None]: json
+ aws s3 website s3://mount-ec2-ohio --index-document index.html ----------(ya command sa Static website hosting enable hoti h)
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+5.2-tier?
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+6.how to recover the ssh key when production server is running?
+
+
+Step to recover lost ssh key :-
+First create new instance in same availability zone and check 2/2 status check
+Then stopped both instances and wait for fully stopped
+Then detach volume from old instance and attach to new instance which we just created 
+Then start instance and wait untill it shows fully 2/2status check 
+Ssh into new instance 
+And write this 
+sudo -i
+mkdir recover     (Note :- if you want to do best practice then create  into /mnt otherwise anywhere it work )
+mount /dev/xvdf1 recover   ( note if you face wrong fs type then use first blkid to check which file system it get then use this     -->.     mount -t xfs -o nouuid /dev/xvdf1 recover )
+
+
+cat /home/ec2-user/.ssh/authorized_keys > recover/home/ec2-user/.ssh/authorized_keys
+
+
+umount /dev/xvdf1
+
+Then stopped instance wait till fully stopped then detach volume and give name /dev/xvda and attached to old instance 
+
+Then take ssh using new key of old instance 
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+7.3 tier?
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+8.vpc peering?
+
+
+create vpc-01(10.0.0.0/18)
+then under vpc create 2 subnet---->public-sub(10.0.0.0/21)
+                               ---->private-sub(10.0.8.0/21) and 
+
+create----Internet gateways ----attach---vpc-01
+
+
+create another vpc-02(172.31.0.0/18)
+create----subnet-----private-sub(172.31.0.0/20)
+
+
+create Peering connection------> VPC ID (Requester)----vpc01
+
+                                 VPC ID (Accepter)-----vpc02
+
+
+attach on Route tables ----- (Peering connection)>>>>vpc01----Routes---->edit routes--vpc2 ki ip-----Target----Peering connection
+                                                     vpc02----Routes---->edit routes--vpc01 ki ip-----Target---Peering connection>>> save
+
+
+
+
+
+
+Peering connection-----action---->>Accept krna
+
+
+
+
+dono ka instance la kr ssh connectin try kro ----connect hogya to job done
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+9.Server migration on premises to cloud premises (linux/windows)?****
+
+
+website-->https://tech2towards.blogspot.com/2022/12/migrating-onpremise-vm-to-amazon-ec2.html
+video---->https://www.youtube.com/watch?v=EkUS10FmOQc
+
+Prerequisites:
+
+IAM User with "Administrator" Access
+AWS CLI installed on your machine & Configure "aws configure" 
+Virtual Machine as "Oracle VM VirtualBox" and Etc.
+
+
+
+Step 1) Export your Virtual Machine image with extention of OVA.
+From AWS official documents here are some of the formats that you can use:
+
+
+Open Virtualization Archive (OVA)  (vm oracal)
+file-----> Export appliance...
+seclect ---centos/linux ----> Next
+format---- open virtualization format 2.0
+file- C:\Users\Dell\OneDrive\Documents\linux/centos (vm mach).ova
+mac add-> include all network adapter MAC add
+next ---> next >>>>
+
+
+
+
+Step 2) Create an S3 bucket (Ex: vm-machine-bucket)
+
+Create an S3 bucket in the region where you will create your EC2.
+
+
+name-->
+region same on ec2
+block all public access (unmark)>>>>>>>>create bucket
+
+
+
+
+
+
+Step 3) Create an IAM role named vmimport
+
+To allow VM import/export service to perform some operation you should create a service role called ‘vmimport’.
+
+
+Create a file named trust-policy.json on your computer. Add the following policy to the file
+
+
+
+{
+   "Version": "2012-10-17",
+   "Statement": [
+      {
+         "Effect": "Allow",
+         "Principal": { "Service": "vmie.amazonaws.com" },
+         "Action": "sts:AssumeRole",
+         "Condition": {
+            "StringEquals":{
+               "sts:Externalid": "vmimport"
+            }
+         }
+      }
+   ]
+}
+
+
+
+
+
+$ aws iam create-role --role-name vmimport --assume-role-policy-document "file://trust-policy.json"
+
+
+
+
+Create another file named role-policy.json with the following policy, Don't forget to change your bucket name with existing one !
+
+
+{
+    "Version":"2012-10-17",
+    "Statement":[
+       {
+          "Effect": "Allow",
+          "Action": [
+             "s3:GetBucketLocation",
+             "s3:GetObject",
+             "s3:ListBucket" 
+          ],
+          "Resource": [
+             "arn:aws:s3:::vm-machine-bucket",-------aapna bucket arn dalna h 
+             "arn:aws:s3:::vm-machine-bucket/*"-------aapna bucket arn dalna h
+          ]
+       },
+       {
+          "Effect": "Allow",
+          "Action": [
+             "s3:GetBucketLocation",
+             "s3:GetObject",
+             "s3:ListBucket",
+             "s3:PutObject",
+             "s3:GetBucketAcl"
+          ],
+          "Resource": [
+             "arn:aws:s3:::vm-machine-bucket",-------aapna bucket arn dalna h
+             "arn:aws:s3:::vm-machine-bucket/*"-------aapna bucket arn dalna h
+          ]
+       },
+       {
+          "Effect": "Allow",
+          "Action": [
+             "ec2:ModifySnapshotAttribute",
+             "ec2:CopySnapshot",
+             "ec2:RegisterImage",
+             "ec2:Describe*"
+          ],
+          "Resource": "*"
+       }
+    ]
+ }
+
+
+
+
+
+aws iam put-role-policy --role-name vmimport --policy-name vmimport --policy-document "file://role-policy.json"
+
+
+
+
+
+Step 4) Upload that exported image to S3 Bucket
+
+$ aws s3 mv "/home/ubuntu/Documents/centos.ova" s3://vm-machine-bucket
+
+
+Step 5) Import the VM image to AWS AMI Section
+
+After you upload your VM image file to Amazon S3, you can use the AWS CLI to import the image.
+
+
+
+Create another file named containers.json with the following policy.
+
+Note : find S3 key name like: under your bucket
+
+
+
+
+[
+  {
+    "Description": "My Server OVA",
+    "Format": "ova",
+    "UserBucket": {
+        "S3Bucket": "vm-machine-bucket",      (------bucket name) 
+        "S3Key": "centos.ova"(------vm ka name)
+    }
+  }
+]
+
+
+
+
+$ aws ec2 import-image --description "My On-Premise Centos VM" --disk-containers "file://containers.json"
+
+
+
+After executing cmd you will output Which is as follows:
+
+
+
+
+{
+    "Description": "My On-Premise Centos VM",
+    "ImportTaskId": "import-ami-0ec606d80dbc5372e",
+    "Progress": "1",
+    "SnapshotDetails": [
+        {
+            "Description": "My Server OVA",
+            "DiskImageSize": 0.0,
+            "Format": "OVA",
+            "UserBucket": {
+                "S3Bucket": "vm-migrate-onpre",
+                "S3Key": "linux Clone-How To Migrate On Premise VM To AWS cloud.ova"
+            }
+        }
+    ],
+    "Status": "active",
+    "StatusMessage": "pending"
+}
+
+
+
+
+
+Step 6) Monitor an import image task
+
+Note: Replace "import-ami-1234567890abcdef0" from above output ImportTaskId
+
+
+
+$ aws ec2 describe-import-image-tasks --import-task-ids import-ami-1234567890abc7f744
+
+
+
+result
+
+{
+    "ImportImageTasks": [
+        {
+            "Architecture": "x86_64",
+            "Description": "My On-Premise Centos VM",
+            "ImportTaskId": "import-ami-0ec606d80dbc5372e",
+            "LicenseType": "BYOL",
+            "Platform": "Linux",
+            "Progress": "39",
+            "SnapshotDetails": [
+                {
+                    "DeviceName": "/dev/sda1",
+                    "DiskImageSize": 1903963136.0,
+                    "Format": "VMDK",
+                    "Status": "completed",
+                    "UserBucket": {
+                        "S3Bucket": "vm-migrate-onpre",
+                        "S3Key": "linux Clone-How To Migrate On Premise VM To AWS cloud.ova"
+                    }
+                }
+            ],
+            "Status": "active",
+            "StatusMessage": "booting",
+            "Tags": [],
+            "BootMode": "legacy_bios"
+        }
+    ]
+}
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+10.host application wordpress,python,node.js?
+11.Using ACM how to apply ssl on LB ?
+
+
+
+12.how multipart in s3 
+https://www.youtube.com/watch?v=ZJaNTLKz334
+
+
+13.cross region LB & cross vpc?
+14.Databases migration on primises?'****
+15.NLB configration SSL CERTIFICATE?
+16.How to make a tomcat deamon service?
+17.use ip based routing,failure policy under lb?
+18.cross vpc with LB?
+19.One vpc which is default services attach NACL,DHCP,RT?
+20.Output in one files?
+21.LB of log generate & put in the s3 bucket ?
+22.Bluegreen Deployment?
+23.Instead of using NAT Gateway use ec2 instance?****
+24.Autoscaling with LB?
+25.host web page through s3 bucket.
+26.nginx as a load balancer.
+27.copy s3 bucket object across diffrent aws account.
+28.create AMI from a snapshot & then send it via cross account & cross region?
+29.create instance from AMI?
+30.How to get into index.html & without using vim & without giving permission?
+31.store log of load balancer in s3 bucket?
+32.make a directory with name "2013 dec 12"?
+33.Generate log for vpc?
+34.Mount EBS on multiple instance ?
+35.How many edge location can create in aws?
+36.open ssh use ssl certificate by nginx?
+37.apply sqs & sns on autoscaling?
+38. vpn configuration - site to site vpn
+39. bucket replication with cross region & cross acc.?
+40. 3tier with route53 by s3 and cloudfront (project)
+
+	

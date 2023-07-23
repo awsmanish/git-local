@@ -1,0 +1,236 @@
+website-->https://tech2towards.blogspot.com/2022/12/migrating-onpremise-vm-to-amazon-ec2.html
+video---->https://www.youtube.com/watch?v=EkUS10FmOQc
+
+Prerequisites:
+
+IAM User with "Administrator" Access
+AWS CLI installed on your machine & Configure "aws configure" 
+Virtual Machine as "Oracle VM VirtualBox" and Etc.
+
+
+
+Step 1) Export your Virtual Machine image with extention of OVA.
+From AWS official documents here are some of the formats that you can use:
+
+
+Open Virtualization Archive (OVA)  (vm oracal)
+file-----> Export appliance...
+seclect ---centos/linux ----> Next
+format---- open virtualization format 2.0
+file- C:\Users\Dell\OneDrive\Documents\linux/centos (vm mach).ova
+mac add-> include all network adapter MAC add
+next ---> next >>>>
+
+
+
+
+Step 2) Create an S3 bucket (Ex: vm-machine-bucket)
+
+Create an S3 bucket in the region where you will create your EC2.
+
+
+name-->
+region same on ec2
+block all public access (unmark)>>>>>>>>create bucket
+
+
+
+
+
+
+Step 3) Create an IAM role named vmimport
+
+To allow VM import/export service to perform some operation you should create a service role called ‘vmimport’.
+
+
+Create a file named trust-policy.json on your computer. Add the following policy to the file
+
+
+
+{
+   "Version": "2012-10-17",
+   "Statement": [
+      {
+         "Effect": "Allow",
+         "Principal": { "Service": "vmie.amazonaws.com" },
+         "Action": "sts:AssumeRole",
+         "Condition": {
+            "StringEquals":{
+               "sts:Externalid": "vmimport"
+            }
+         }
+      }
+   ]
+}
+
+
+
+
+
+$ aws iam create-role --role-name vmimport --assume-role-policy-document "file://trust-policy.json"
+
+
+
+
+Create another file named role-policy.json with the following policy, Don't forget to change your bucket name with existing one !
+
+
+{
+    "Version":"2012-10-17",
+    "Statement":[
+       {
+          "Effect": "Allow",
+          "Action": [
+             "s3:GetBucketLocation",
+             "s3:GetObject",
+             "s3:ListBucket" 
+          ],
+          "Resource": [
+             "arn:aws:s3:::vm-machine-bucket",-------aapna bucket arn dalna h 
+             "arn:aws:s3:::vm-machine-bucket/*"-------aapna bucket arn dalna h
+          ]
+       },
+       {
+          "Effect": "Allow",
+          "Action": [
+             "s3:GetBucketLocation",
+             "s3:GetObject",
+             "s3:ListBucket",
+             "s3:PutObject",
+             "s3:GetBucketAcl"
+          ],
+          "Resource": [
+             "arn:aws:s3:::vm-machine-bucket",-------aapna bucket arn dalna h
+             "arn:aws:s3:::vm-machine-bucket/*"-------aapna bucket arn dalna h
+          ]
+       },
+       {
+          "Effect": "Allow",
+          "Action": [
+             "ec2:ModifySnapshotAttribute",
+             "ec2:CopySnapshot",
+             "ec2:RegisterImage",
+             "ec2:Describe*"
+          ],
+          "Resource": "*"
+       }
+    ]
+ }
+
+
+
+
+
+aws iam put-role-policy --role-name vmimport --policy-name vmimport --policy-document "file://role-policy.json"
+
+
+
+
+
+Step 4) Upload that exported image to S3 Bucket
+
+$ aws s3 mv "/home/ubuntu/Documents/centos.ova" s3://vm-machine-bucket
+
+
+Step 5) Import the VM image to AWS AMI Section
+
+After you upload your VM image file to Amazon S3, you can use the AWS CLI to import the image.
+
+
+
+Create another file named containers.json with the following policy.
+
+Note : find S3 key name like: under your bucket
+
+
+
+
+[
+  {
+    "Description": "My Server OVA",
+    "Format": "ova",
+    "UserBucket": {
+        "S3Bucket": "vm-machine-bucket",      (------bucket name) 
+        "S3Key": "centos.ova"(------vm ka name)
+    }
+  }
+]
+
+
+
+
+$ aws ec2 import-image --description "My On-Premise Centos VM" --disk-containers "file://containers.json"
+
+
+
+After executing cmd you will output Which is as follows:
+
+
+
+
+{
+    "Description": "My On-Premise Centos VM",
+    "ImportTaskId": "import-ami-0ec606d80dbc5372e",
+    "Progress": "1",
+    "SnapshotDetails": [
+        {
+            "Description": "My Server OVA",
+            "DiskImageSize": 0.0,
+            "Format": "OVA",
+            "UserBucket": {
+                "S3Bucket": "vm-migrate-onpre",
+                "S3Key": "linux Clone-How To Migrate On Premise VM To AWS cloud.ova"
+            }
+        }
+    ],
+    "Status": "active",
+    "StatusMessage": "pending"
+}
+
+
+
+
+
+Step 6) Monitor an import image task
+
+Note: Replace "import-ami-1234567890abcdef0" from above output ImportTaskId
+
+
+
+$ aws ec2 describe-import-image-tasks --import-task-ids import-ami-1234567890abc7f744
+
+
+
+result
+
+{
+    "ImportImageTasks": [
+        {
+            "Architecture": "x86_64",
+            "Description": "My On-Premise Centos VM",
+            "ImportTaskId": "import-ami-0ec606d80dbc5372e",
+            "LicenseType": "BYOL",
+            "Platform": "Linux",
+            "Progress": "39",
+            "SnapshotDetails": [
+                {
+                    "DeviceName": "/dev/sda1",
+                    "DiskImageSize": 1903963136.0,
+                    "Format": "VMDK",
+                    "Status": "completed",
+                    "UserBucket": {
+                        "S3Bucket": "vm-migrate-onpre",
+                        "S3Key": "linux Clone-How To Migrate On Premise VM To AWS cloud.ova"
+                    }
+                }
+            ],
+            "Status": "active",
+            "StatusMessage": "booting",
+            "Tags": [],
+            "BootMode": "legacy_bios"
+        }
+    ]
+}
+
+
+

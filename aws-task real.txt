@@ -1,0 +1,36 @@
+Real Time Task 
+Auto Scaling based on CPU Utilization with EC2 Auto Scaling
+* Set up EC2 Auto Scaling to automatically adjust the number of instances based on CPU utilization metrics.
+* Configure CloudWatch Alarms to trigger scaling actions in real-time when CPU thresholds are exceeded.
+* Monitor auto scaling events and instances in real-time to ensure optimal resource utilization and application performance
+ Database Replication and Failover with RDS Multi-AZ
+* Configure RDS Multi-AZ deployment for automatic synchronous replication of your database to a standby instance.
+* Monitor Multi-AZ replication status and database health metrics in real-time.
+* Trigger automatic failover to the standby instance in case of primary database failure.
+Log Analysis with CloudWatch Logs Insights
+* Utilize CloudWatch Logs Insights to analyze log data from various AWS services in real-time.
+* Create custom log queries to identify trends, errors, or patterns in logs for troubleshooting or security analysis.
+* Monitor log analysis results in real-time and set up automated actions or alerts based on specific log query results.
+Network Load Balancing with Application Load Balancer and Target Tracking Scaling
+* Configure an Application Load Balancer (ALB) to distribute traffic across multiple EC2 instances in real-time.
+* Set up target tracking scaling with ALB to automatically adjust the number of instances based on the target's average request count or CPU utilization.
+* Monitor ALB metrics and target tracking scaling activities in real-time for efficient traffic management and optimal application performance.
+Network Traffic Monitoring with VPC Flow Logs and CloudWatch Logs
+* Enable VPC Flow Logs to capture and log network traffic metadata at the subnet or ENI level.
+* Stream VPC Flow Logs to CloudWatch Logs for real-time analysis, monitoring, and troubleshooting.
+* Set up real-time log alerts or use CloudWatch Logs Insights to identify network traffic anomalies or security threats.
+Volume Monitoring with CloudWatch Metrics and Alarms
+* Enable CloudWatch Metrics for EBS volumes to collect real-time performance metrics such as throughput and latency.
+* Set up CloudWatch Alarms to trigger notifications or actions when volume performance metrics exceed predefined thresholds.
+* Monitor volume metrics and alarms in real-time to identify and address performance bottlenecks or capacity issues.
+
+ Instance Monitoring and Performance Analysis with EC2 Systems Manager
+* Utilize EC2 Systems Manager to collect real-time metrics and logs from instances.
+* Set up CloudWatch Dashboards to monitor CPU, memory, disk utilization, and network traffic in real-time.
+* Configure CloudWatch Alarms to trigger notifications when performance thresholds are breached.
+Access Control with IAM Roles and Instance Metadata
+* Create IAM roles with time-limited permissions for EC2 instances.
+* Use instance metadata to retrieve temporary credentials for real-time access to AWS services.
+* Monitor and rotate IAM role credentials regularly to ensure security and minimize the risk of unauthorized access.
+Create a mechanism which should send me notification over email if there is  change in IAM policy, role.
+Create a mechanism which should send me notification over email if there is any change in s3 service like creating bucket, any change in bucket policy etc.

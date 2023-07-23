@@ -1,0 +1,39 @@
+Step to recover lost ssh key :-
+First create new instance in same availability zone and check 2/2 status check
+Then stopped both instances and wait for fully stopped
+Then detach volume from old instance and attach to new instance which we just created 
+Then start instance and wait untill it shows fully 2/2status check 
+Ssh into new instance 
+And write this 
+sudo -i
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Step to recover lost ssh key :-
+First create new instance in same availability zone and check 2/2 status check
+Then stopped both instances and wait for fully stopped
+Then detach volume from old instance and attach to new instance which we just created 
+Then start instance and wait untill it shows fully 2/2status check 
+Ssh into new instance 
+And write this 
+sudo -i
+mkdir recover     (Note :- if you want to do best practice then create  into /mnt otherwise anywhere it work )
+mount /dev/xvdf1 recover   ( note if you face wrong fs type then use first blkid to check which file system it get then use this     -->.     mount -t xfs -o nouuid /dev/xvdf1 recover )
+
+
+cat /home/ec2-user/.ssh/authorized_keys > recover/home/ec2-user/.ssh/authorized_keys
+
+
+umount /dev/xvdf1
+
+Then stopped instance wait till fully stopped then detach volume and give name /dev/xvda and attached to old instance 
+
+Then take ssh using new key of old instance 
+
+
+From this you will recover your ssh key ok 🙏🙏

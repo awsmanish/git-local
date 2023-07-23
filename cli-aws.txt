@@ -1,0 +1,128 @@
+https://docs.aws.amazon.com/cli/latest/index.html
+
+
+https://docs.aws.amazon.com/cli/v1/userguide/install-linux.html#install-linux-pip
+
+
+
+
+
+$ sudo -i
+# aws --version
+-bash: aws: command not found(error)
+# python --version
+Python 3.9.10(dekhta h)
+# curl -O https://bootstrap.pypa.io/get-pip.py (pak-download)
+# python3 get-pip.py --user
+# export PATH=~/.local/bin:$PATH
+# source ~/.bash_profile
+# pip3 --version
+# pip3 install awscli --upgrade --user
+# aws --version
+aws-cli/1.27.136 Python/3.9.10 Linux/5.14.0-70.49.1.el9_0.x86_64 botocore/1.29.136
+
+
+# aws configure
+AWS Access Key ID [None]:
+AWS Secret Access Key [None]:
+Default region name [None]:
+Default output format [None]: table
+
+# aws iam list-users
+
+# aws iam create-user --user-name cdec12
+# aws iam create-group --group-name hcl
+
+
+# vi policy.json
+past----->
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1684475857016",
+      "Action": "s3:*",
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+
+
+# aws iam create-policy  --policy-name s3-new --policy-document file:///root/policy.json
+
+# aws iam attach-group-policy --group-name hcl --policy-arn  arn:aws:iam::317969937136:policy/s3-new
+
+# aws iam list-groups
+# aws s3 ls
+
+# aws s3 mb s3://new-cbcdecb12 --region us-east-2
+# aws s3 ls
+
+# touch new1234
+# aws s3 cp new1234 s3://new-cbcdecb12
+# aws s3 ls s3://new-ccdecb12
+# rm -rvf new1234
+removed 'new1234'
+
+
+# aws s3 ls s3://new-ccdecb12
+2023-05-19 06:25:00          0 new1234
+
+
+# aws s3 cp s3://new-ccdecb12/new1234 .
+download: s3://new-ccdecb12/new1234 to ./new1234
+
+
+#ls
+
+# aws s3 rm s3://new-ccdecb12/new1234
+delete: s3://new-ccdecb12/new1234
+
+
+# aws s3 ls
+
+
+# aws s3 ls s3://new-ccdecb12
+# aws s3 rb s3://new-ccdecb12
+remove_bucket: new-ccdecb12
+
+
+# aws ec2 describe-instances --region us-east-2
+
+
+
+# aws ec2 run-instances --image-id  ami-067a8829f9ae24c1c --instance-type t2.micro --key-name ohio.key --region us-east-2
+
+# aws ec2 terminate-instances --instance-id i-08b56f17ed4cd8f1b --region us-east-2
+
+
+
+-------------------------------
+|     TerminateInstances      |
++-----------------------------+
+||   TerminatingInstances    ||
+|+---------------------------+|
+||        InstanceId         ||
+|+---------------------------+|
+||  i-08b56f17ed4cd8f1b      ||
+|+---------------------------+|
+|||      CurrentState       |||
+||+-------+-----------------+||
+||| Code  |      Name       |||
+||+-------+-----------------+||
+|||  32   |  shutting-down  |||
+||+-------+-----------------+||
+|||      PreviousState      |||
+||+---------+---------------+||
+|||  Code   |     Name      |||
+||+---------+---------------+||
+|||  16     |  running      |||
+||+---------+---------------+
+
+
+
+
+thank you
+
+

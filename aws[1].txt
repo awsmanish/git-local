@@ -1,0 +1,239 @@
+1* EBS (ELastic BLock Store):- 
+--->Like EC2 is a virtual server same as EBS is a virtual disk in a cloud 
+--->Amazon Elastic Block Store (Amazon EBS) provides block level storage volumes for use with EC2 instances
+----> EBS volume types depends upon iops and throughput 
+
+
+types of ebs volume 
+1)SSD:----> a)General purpose  (gp2, gp3)       }___(bootable volume)    
+            b)Provisioned IOPS (io1, io2)       }
+
+     performance high, operation per second/input output per second high  
+
+General Purpose SSD (gp2): This is the default EBS volume type and is suitable for most workloads. It provides a balance of price and performance, with a baseline of 3 IOPS per GB and burst performance of up to 16,000 IOPS.
+
+General Purpose SSD (gp3): This is a newer EBS volume type that provides a lower-cost alternative to gp2 volumes while still providing similar performance. It offers a baseline of 3,000 IOPS and burst performance of up to 16,000 IOPS, with a lower per-GB cost than gp2 volumes.
+
+Provisioned IOPS SSD (io1): This is a high-performance EBS volume type that is designed for I/O-intensive workloads, such as databases and other transactional workloads. It allows you to provision a specific number of IOPS for your volume, up to a maximum of 64,000 IOPS per volume.
+
+Provisioned IOPS SSD (io2): IO2 is another EBS volume type that is designed for high-performance and mission-critical workloads that require high durability, low latency, and consistent I/O performance. It offers higher maximum IOPS and lower latency than the IO1 volume type.
+
+The IO2 volume type provides a baseline of 100 IOPS per GB, with the ability to provision up to 64,000 IOPS per volume. It also provides a lower price-per-GB and lower cost-per-IOPS compared to the previous-generation io1 volume type.
+
+In addition, IO2 volumes are designed to be more durable than other EBS volume types. They have a 99.999% annualized failure rate (AFR) and offer 20 times more durability than standard EBS volumes. This makes IO2 volumes ideal for critical business applications that require high availability and reliability.
+
+Overall, IO2 volumes offer high performance, low latency, and high durability, making them well-suited for I/O-intensive and mission-critical workloads.
+
+
+
+2)HDD-----> a)Cold hdd (sc1)       }______(non bootable volume)       
+            b)Throughput (st1)     }
+
+     transfer rate high like for storing data 
+
+Throughput Optimized HDD (st1): This EBS volume type is designed for frequently accessed, throughput-intensive workloads, such as big data, data warehouses, and log processing. It provides low-cost storage optimized for sequential read and write workloads, with a baseline throughput of 40 MB/s per TB and burst performance of up to 500 MB/s.
+
+Cold HDD (sc1): This EBS volume type is designed for less frequently accessed workloads, such as long-term backups and disaster recovery. It provides low-cost storage optimized for sequential read and write workloads, with a baseline throughput of 12 MB/s per TB and burst performance of up to 80 MB/s.
+
+
+ 
+3)previous generation (Magnetic EBS volume )                }---(bootable volume)
+
+Magnetic EBS volumes are the lowest cost EBS volume type, designed for infrequent access to data and workloads where performance is not a critical factor. They use traditional magnetic hard disk drives (HDDs) for storage, which can provide a good balance of capacity and cost.
+
+Magnetic volumes offer a maximum throughput of 40-90 MB/s and a maximum IOPS of 100-200 IOPS, which is significantly lower than the other EBS volume types. They also have higher latency than other EBS volume types, which may make them less suitable for applications that require low latency and high performance.
+
+Magnetic volumes are a good option for workloads that do not require high performance or frequent access to data, such as backup and recovery, data archiving, and other low-intensity workloads. They are also a cost-effective way to store large amounts of infrequently accessed data in the cloud.
+
+
+
+1) EBS volume availability zone specific
+2) we can chnage size and type of ebs in running condition also
+3) we can not reduce size of ebs volume 
+  
+
+ebs volume----> snapshot ------> AMI
+  
+snapshot -----> photocopy of EBS volume used for backup purpose.
+1) we can create snapshot of ebs instance in running condition also 
+   (NOTE: sometime current data will be lost during creation of snapshot in running condition )
+ 
+
+AMI ---->  
+
+AMI stands for Amazon Machine Image. It is a pre-configured virtual machine image used to create and launch EC2 instances in the AWS cloud. AMIs provide a quick and easy way to deploy applications and infrastructure in the cloud, as they contain a complete snapshot of the root file system, installed applications, and other necessary configuration settings. AMIs can be customized, shared, and reused, allowing users to easily deploy applications and services in the cloud.
+         MY AMI ---> where you get your ami which you created 
+1) we can create AMI of instance in running condition
+
+
+---------------------------------------------------------------------------------------------------------- 
+
+homework:- How to take ssh of ec2 instance if you loss private key
+
+----------------------------------------------------------------------------------------------------------
+
+* template:
+ 
+It is a preconfiguration that contains all the settings required to launch an EC2 instance, including instance type, storage, security groups, networking, and other options.
+Launch Templates simplify the process of launching instances by allowing users to specify all the necessary configuration settings in a single template, which can then be used to launch instances manually or programmatically through the AWS CLI, SDKs, or other tools.
+
+
+
+-----------------------------------------------------------------------------------------------------------
+
+
+* ELASTIC LOAD BALANCER (ELB):- 
+
+In AWS, a load balancer is a managed service that distributes incoming network traffic across multiple targets, such as EC2 instances, containers, and IP addresses, in order to improve availability, scalability, and performance of applications.
+
+Load balancers work by distributing traffic to the available targets based on various algorithms, such as round-robin, least connections, and IP hash. This allows the traffic to be distributed evenly across the targets, which can help to prevent overloading of any individual target and ensure that the workload is evenly distributed.
+
+There are four types of load balancers in AWS: Application Load Balancer (ALB), Network Load Balancer (NLB), Classic Load Balancer (CLB) , and Gateway Load Balancer (GWLB). ALB is used for HTTP/HTTPS traffic, NLB is used for TCP/UDP traffic, CLB is the legacy load balancer that supports both HTTP/HTTPS and TCP/UDP traffic and GWLB operates at the network layer (Layer 3) .
+
+Load balancers can also perform various tasks, such as SSL termination, session stickiness, and health checks, to ensure that traffic is being routed to healthy targets and to provide a better user experience. They can be easily configured and managed through the AWS Management Console, CLI, or SDKs.
+
+
+1)Classic Load Balancer (CLB): CLB is the original load balancer that is available in AWS. It can distribute traffic to different targets based on round-robin, IP hash, or session stickiness. However, it does not support advanced routing or load balancing capabilities like ALB.
+
+2)Application Load Balancer (ALB): ALB operates at the application layer (Layer 7) and can route traffic to different targets based on the content of the request. This makes it suitable for managing traffic for HTTP/HTTPS web applications that require advanced routing and load balancing capabilities and has intelligent function such as redirect traffic.
+
+3)Network Load Balancer (NLB): NLB operates at the transport layer (Layer 4) and can distribute traffic to different targets based on IP protocol data. This makes it suitable for managing traffic for TCP/UDP-based applications that require low-latency and high-throughput connections and costlier.
+
+4)Gateway Load Balancer (GWLB): GWLB operates at the network layer (Layer 3) and can distribute traffic between virtual network appliances that are running in Amazon Elastic Compute Cloud (EC2) instances. This makes it suitable for managing traffic for network applications that require network-level routing, such as IPsec VPNs, NAT gateways, and other network appliances.
+In AWS, a Gateway Load Balancer (GWLB) is a new type of load balancer that is designed to manage and scale virtual network appliances, such as firewalls, intrusion detection and prevention systems, and deep packet inspection systems.
+    A GWLB can distribute network traffic across multiple virtual appliances running in Amazon Elastic Compute Cloud (EC2) instances, which allows you to build highly available and scalable network architectures in the cloud. It provides advanced features, such as intelligent routing, health checks, and automatic failover, which can help to ensure that your network traffic is always being routed to healthy virtual appliances.
+    GWLB is different from other load balancers in AWS because it operates at the network layer (Layer 3) and does not terminate any traffic. Instead, it forwards traffic between subnets and virtual appliances without modifying the packets. It also provides a highly available and scalable solution for virtual network appliances that need to process a large volume of traffic. 
+
+
+Each type of load balancer has its own strengths and use cases, and the choice of which one to use depends on the specific requirements of your application or workload.
+
+
+1) first with classic load balancer (monolithic) (previous generation)
+
+create instance -----> user data---> 
+#!/bin/bash
+yum update -y
+yum install httpd -y 
+echo "<h1> this is server $HOSTNAME </h1>" > /var/www/html/index.html
+---> security group ---> port 80 (HTTP) ---> launch instance
+then create load balancer ---> name ----> security group ---->you can change health check too ---> add ec2-instances --->create 
+hit dns of load balancer you will get your web page
+
+
+
+2)Application load balancer (microservice )
+
+create 2 instance of home server
+create instance -----> user data---> 
+#!/bin/bash
+yum update -y
+yum install httpd -y 
+echo "<h1> this is home page $HOSTNAME </h1>" > /var/www/html/index.html
+---> security group ---> port 80 (HTTP) ---> launch instance
+ 
+create 2 instance of mobile server
+create instance -----> user data---> 
+#!/bin/bash
+yum update -y
+yum install httpd -y 
+mkdir -p /var/www/html/mobile/
+echo "<h1> this is mobile page $HOSTNAME </h1>" > /var/www/html/mobile/index.html
+---> security group ---> port 80 (HTTP) ---> launch instance
+
+create 2 instance of laptop server
+create instance -----> user data---> 
+#!/bin/bash
+yum update -y
+yum install httpd -y 
+mkdir -p /var/www/html/laptop/
+echo "<h1> this is laptop page $HOSTNAME </h1>" > /var/www/html/laptop/index.html
+---> security group ---> port 80 (HTTP) ---> launch instance
+
+then create ALB 
+lb name ---> internet-facing ---> vpc ---> select AZ's ---> security group ---> in listner and routing select target group, for that create new target group ---> 
+---------------TARGET GROUP--------------------
+choose target type instances --->target group name (home)---> protocol HTTP : 80 ----> vpc ---> health check  - http , path /index.html ---> next ----> select home instance --->include as pending below ---> create target group  
+
+choose target type instances --->target group name (mobile)---> protocol HTTP : 80 ----> vpc ---> health check  - http , path /mobile/index.html ---> next ----> select mobile instance --->include as pending below ---> create target group  
+
+
+choose target type instances --->target group name (laptop)---> protocol HTTP : 80 ----> vpc ---> health check  - http , path /laptop/index.html ---> next ----> select laptop instance --->include as pending below ---> create target group  
+-----------------------------------------------------------
+then attach home target group to ALB -----> create ALB
+to create extended server we click on ALB which we created then go to listener then select listener then edit rules ----> insert rule ----> path /mobile/  then select  TG(TARGET GROUP) of mobile again for laptop insert rule ----> path /laptop/  then select  TG(TARGET GROUP) of laptop
+
+then hit DNS of load balancer you will see home page if you write dns/mobile/ you will see mobile page and dns/laptop/ you will see laptop page and it will balance load between the two instance if one goes down then other will manage it 
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+*  SCALING
+vertical scaling :- t2.micro  ---> t2.large (instance type of ec2 machine) ---> instance should be in stopped condition 
+horizontal scaling :- no. identical instances  ----> but we have to add in load balancer to access this instances then
+
+* AUTOSCALING : -automatically scale up and scale down according to situation/condition and attach or not to load balancer according to requirement
+
+condition :
+If cpu utilization >=60 create new instance  
+desired capacity: 3 ----> when autoscaling group will create it will create 3 instance
+minimum size: 2 -----> when load decrese as condition threshold value it will decrease instance but it will remain minimum 2 instance for working 
+maximum size: 6 -----> when increase load it will create instance as condition upto 6 instances
+
+* CLOUDWATCH :-
+ Insufficient data:-----> cpu data can not access from instance 
+ 
+
+ ok:----> when data recieve from instance 
+
+
+ in alarm :-----> if cpu utilization greater than 70 or >=70 as per condition
+
+alarm for only ec2 
+launch instance with enable detail monitoring ----> use cloudwatch service wait for minimum 5 minute for update all metrices 
+create alarm -----> select metric ----> EC2----> preinstance metric---> copy instance-id or search by name of ec2 instance with cpuutilization----> select metric ---> condition --->greater than 70 ----> alarm state trigger inalarm ---> create new topic ---> email ----> create topic----> EC2 action ----> in alarm ---> stop this instance ----> alarm name ----> preview and create 
+
+then for practical, we need to install stress command but in company it will done by request so...
+yum install stress -y
+ stress --cpu 70 --io4 --vm 2 --vm-bytes 128M --timeout 10m &
+uptime 
+and watch in cloudwatch metric 
+allmetric----> ec2----> preinstance metric ---> paste instance id then select cpuutilization then select in number
+then you have to wait till cpu utilization more than 60 after that in alarm state and your instance will stop 
+
+
+
+FOR AUTOSCALING 
+CREATE launch configuration -----> create autoscaling group ----> name---> launch configuration ----> vpc---->all AZ ----> now no load balancer --->next----> group size (desired = 3 , minimum = 2, maximum = 5) ----> scaling policies-none -----> review and create autoscaling group 
+
+after that in autoscaling group ----> automatic scaling ----> inside it we create dynamic scaling ----> create simple scaling policy ----> policy name (increase-group)---> and without create alarm, we create policy (Because this policy then reflect in cloudwatch )---->and  same for decrease group 
+
+then in cloud watch we have to create alarm for increase and decrease policy 
+create alarm ----> EC2---->by autoscaling group ----> choose cpu utilization ---->condition greater than 60 ----> trigger notification ----> select existing SNS topic ----> then auto scaling action ----> in alarm ----> ec2-auto-scaling-group -----> select group ----> choose action (increase)----> name----> preview and create alarm  
+
+create alarm ----> EC2---->by autoscaling group ----> choose cpu utilization ---->condition less than 20 ----> trigger notification ----> select existing SNS topic ----> then auto scaling action ----> in alarm ----> ec2-auto-scaling-group -----> select group ----> choose action (decrease)----> preview and create alarm  
+
+after that go in autoscaling group dynamic scaling select increase policy and edit -----> add --> 2 instance ----> update
+and then decrese policy 
+edit -----> remove --> 2 instance ----> update
+ 
+after that there is in alarm beacause cpuutilization is less than 20 ,so ..  
+then it will remove 1 instance out of 3 beacuse we already define minimum 2 instance in autoscaling group 
+
+for increase instances, we have to use stress command  
+then ssh instance  
+yum install stress -y
+ stress --cpu 70 --io4 --vm 2 --vm-bytes 128M --timeout 10m &
+uptime 
+and watch in cloudwatch metric 
+
+
+
+
+
+
+
+
+
+
