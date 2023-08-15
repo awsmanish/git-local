@@ -432,6 +432,97 @@ https://www.youtube.com/watch?v=ZJaNTLKz334
 24.Autoscaling with LB?
 25.host web page through s3 bucket.
 26.nginx as a load balancer.
+
+server1 (instance)
+
+create instance (create normal instance) 
+name ngx 01
+ssh ngx 01 ----> 
+# yum update -y
+# yum install nginx
+#vim /usr/share/nginx/html/index.html
+i
+server01
+:wq!
+
+
+
+server2(instance)
+
+create instance (create normal instance) 
+name ngx 02
+ssh ngx 02----> 
+# yum update -y
+# yum install nginx
+#vim /usr/share/nginx/html/index.html
+i
+server02
+:wq!
+
+
+
+
+server 3 (instance)
+
+name --> nginx.conf
+ssh 
+# yum update -y
+# yum install nginx
+#vim /etc/nginx/nginx.conf
+
+
+
+delete:----
+ server {
+        listen       80;
+        listen       [::]:80;
+        server_name  _;
+        root         /usr/share/nginx/html;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        error_page 404 /404.html;
+        location = /404.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+        }
+    }
+
+replace :------
+
+ upstream myapp1 {
+        server public ip ser01;
+        server public ip ser02;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://myapp1;
+        }
+    }
+
+
+
+#systemctl start nginx
+#systemctl enable nginx
+#systemctl restart nginx
+
+
+search ------------nginx.conf public ip ------refresh 
+
+
+
+
+
+
+
+
+
 27.copy s3 bucket object across diffrent aws account.
 28.create AMI from a snapshot & then send it via cross account & cross region?
 29.create instance from AMI?
